@@ -1,0 +1,58 @@
+Xft.dpi:        96
+Xft.antialias:  true
+Xft.rgba:       rgb
+Xft.hinting:    true
+Xft.hintstyle:  hintslight
+
+URxvt.font: xft:Inconsolata-14
+URxvt.boldFont: xft:Inconsolata-14:bold
+URxvt.italicFont: xft:Inconsolata-14:italic
+URxvt.boldItalicFont: xft:Inconsolata-14:italic:bold
+URxvt.letterSpace: -1
+URxvt.lineSpace: 0
+
+URxvt.scrollstyle: plain
+URxvt.scrollBar_right: true
+URxvt.scrollColor: #3186AD
+URxvt.internalBorder: 0
+URxvt.externalBorder: 0
+URxvt.thickness: 5
+URxvt.dynamicColors: off
+URxvt.intensityStyles: false
+
+URxvt.scrollTtyKeypress: true
+URxvt.scrollTtyOutput: false
+URxvt.buffered: true
+URxvt.saveLines: 5000
+URxvt.matcher.button: 1
+URxvt.url-launcher: firefox
+URxvt.iso14755: false
+URxvt.termName: rxvt-unicode-256color
+
+URxvt.keysym.Home: \033[7~
+URxvt.keysym.End: \033[8~
+URxvt.keysym.KP_Home: \033[7~
+URxvt.keysym.KP_End:  \033[8~
+URxvt.keysym.Shift-Control-V: eval:paste_clipboard
+URxvt.keysym.Shift-Control-C: eval:selection_to_clipboard
+
+*background:   [97]#282a36
+*foreground:   #eff0eb
+*cursorColor:  #9aedfe
+
+*color0:      #33303b
+*color8:      #4f4b58
+*color1:      #ff5c57
+*color9:      #ff5c57
+*color2:      #5af78e
+*color10:     #5af78e
+*color3:      #f3f99d
+*color11:     #f3f99d
+*color4:      #57c7ff
+*color12:     #57c7ff
+*color5:      #ff6ac1
+*color13:     #ff6ac1
+*color6:      #9aedfe
+*color14:     #9aedfe
+*color7:      #eff0eb
+*color15:     #eff0eb

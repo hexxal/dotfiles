@@ -1,0 +1,8 @@
+---
+- name: Install GUI tools
+  hosts: localhost
+  become: no
+
+  roles:
+    - gui
+

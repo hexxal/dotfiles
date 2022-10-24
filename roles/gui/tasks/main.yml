@@ -1,0 +1,28 @@
+---
+- name: Install APT packages
+  become: yes
+  become_method: sudo
+  apt:
+    pkg:
+      - i3
+      - xinit
+      - x11-xserver-utils
+      - snapd
+      - firefox
+      - fonts-inconsolata
+
+- name: Install code via snap
+  become: yes
+  become_method: sudo
+  snap:
+    name: code
+    classic: yes
+
+- name: Set up .Xresources from template
+  template:
+    src: templates/.Xresources
+    dest: /home/{{ ansible_user_id }}/.Xresources
+
+- name: Update fonts cache
+  action: command fc-cache -f -v
+  
