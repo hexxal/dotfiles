@@ -8,6 +8,10 @@
       - zsh
       - fzf
       - rxvt-unicode
+      - bluetooth
+      - pavucontrol
+      - pulseaudio
+      - pulseaudio-module-bluetooth
 
 - name: Set ZSH as default shell
   become: yes
@@ -34,3 +38,10 @@
     name: systemd-networkd-wait-online.service
     enabled: no
     masked: yes
+
+- name: Enable bluetooth
+  become: yes
+  ansible.builtin.systemd:
+    name: bluetooth.service
+    enabled: yes
+    masked: no

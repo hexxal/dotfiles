@@ -24,10 +24,16 @@
     src: templates/.Xresources
     dest: /home/{{ ansible_user_id }}/.Xresources
 
-- name: Set up .i3 from template
+- name: Set up i3 config from template
   template:
     src: templates/i3config
     dest: /home/{{ ansible_user_id }}/.config/i3/config
+
+- name: Set up i3status config from template
+  become: yes
+  template:
+    src: templates/i3status.conf
+    dest: /etc/i3status.conf
 
 - name: Update fonts cache
   action: command fc-cache -f -v
