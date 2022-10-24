@@ -10,6 +10,7 @@
       - snapd
       - firefox
       - fonts-inconsolata
+      - arandr
 
 - name: Install code via snap
   become: yes
@@ -23,6 +24,10 @@
     src: templates/.Xresources
     dest: /home/{{ ansible_user_id }}/.Xresources
 
+- name: Set up .i3 from template
+  template:
+    src: templates/i3config
+    dest: /home/{{ ansible_user_id }}/.config/i3/config
+
 - name: Update fonts cache
   action: command fc-cache -f -v
-  

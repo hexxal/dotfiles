@@ -27,3 +27,10 @@
   template:
     src: templates/.gitconfig
     dest: /home/{{ ansible_user_id }}/.gitconfig
+
+- name: Disable networkd during boot and mask it
+  become: yes
+  ansible.builtin.systemd:
+    name: systemd-networkd-wait-online.service
+    enabled: no
+    masked: yes
