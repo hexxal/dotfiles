@@ -11,6 +11,7 @@
       - firefox
       - fonts-inconsolata
       - arandr
+      - nemo
 
 - name: Install code via snap
   become: yes
