@@ -12,6 +12,17 @@
       - pavucontrol
       - pulseaudio
       - pulseaudio-module-bluetooth
+      - gcc
+      - make
+      - python3-pip
+      - golang
+      - libssl-dev # Python dependency
+      - zlib1g-dev
+      - libbz2-dev
+      - libreadline-dev
+      - llvm
+      - libsqlite3-dev # Python dependency
+
 
 - name: Set ZSH as default shell
   become: yes
@@ -45,3 +56,8 @@
     name: bluetooth.service
     enabled: yes
     masked: no
+
+- name: Creates directory
+  file:
+    path: /home/{{ ansible_user_id }}/projects/go/src
+    state: directory

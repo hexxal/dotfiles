@@ -29,3 +29,7 @@
 - fonts-inconsolata
 - arandr
 - nemo
+
+# TODO
+- Build pyenv properly
+- Install Poetry

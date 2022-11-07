@@ -104,3 +104,10 @@ GITDATA="${vcs_info_msg_0_}"
 
 setopt prompt_subst
 PROMPT='[%T]${USERDATA}${vcs_info_msg_0_}$(git_prompt_postfix)${NEWLINE}${DIRECTORY}${NEWLINE}$ '
+
+export PYENV_ROOT="$HOME/.pyenv"
+command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init -)"
+
+# Poetry
+export PATH="/home/hxl/.local/bin:$PATH"

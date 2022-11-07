@@ -20,6 +20,22 @@
     name: code
     classic: yes
 
+- name: Install VScode extensions
+  command: code --install-extension {{ item }}
+  register: vscode_extension_installation
+  changed_when: "'already installed' not in vscode_extension_installation.stdout"
+  loop:
+    - adamhartford.vscode-base64
+    - adpyke.vscode-sql-formatter
+    - mechatroner.rainbow-csv
+    - medo64.render-crlf
+    - mrorz.language-gettext
+    - ms-python.python
+    - ms-python.vscode-pylance
+    - shardulm94.trailing-spaces
+    - wengerk.highlight-bad-chars
+    - golang.Go
+
 - name: Set up .Xresources from template
   template:
     src: templates/.Xresources
@@ -38,3 +54,101 @@
 
 - name: Update fonts cache
   action: command fc-cache -f -v
+
+- name: Creates tmp Signal directory
+  file:
+    path: /home/{{ ansible_user_id }}/signal
+    state: directory
+
+# - name: Get keys file
+#   ansible.builtin.get_url:
+#     url: https://updates.signal.org/desktop/apt/keys.asc
+#     dest: "/home/{{ ansible_user_id }}/signal/keys.asc"
+#     mode: "0644"
+
+# - name: Install Signal official public software signing key
+#   ansible.builtin.shell: |
+#     set -o pipefail
+#     cat /home/{{ ansible_user_id }}/signal/keys.asc | gpg --dearmor > /home/{{ ansible_user_id }}/signal-desktop-keyring.gpg
+#     cat /home/{{ ansible_user_id }}/signal/signal-desktop-keyring.gpg | sudo tee -a /usr/share/keyrings/signal-desktop-keyring.gpg > /dev/null
+#   args:
+#     creates: /usr/share/keyrings/signal-desktop-keyring.gpg
+#     executable: /bin/zsh
+#   become: true
+
+# # Signal install
+# - name: Check if keyring exists
+#   ansible.builtin.stat:
+#     path: /home/{{ ansible_user_id }}/signal/signal-desktop-keyring.gpg
+#   register: keyring_file
+
+# - name: Add Signal repository to list of repositories
+#   ansible.builtin.shell: |
+#     set -o pipefail
+#     echo 'deb [arch=amd64 signed-by=/home/{{ ansible_user_id }}/signal/signal-desktop-keyring.gpg] https://updates.signal.org/desktop/apt xenial main' |\
+#       sudo tee -a /etc/apt/sources.list.d/signal-xenial.list
+#   args:
+#     creates: /etc/apt/sources.list.d/signal-xenial.list
+#     executable: /bin/zsh
+
+# - name: Update apt cache
+#   ansible.builtin.apt:
+#     update_cache: true
+#   become: true
+
+# - name: Install Signal
+#   ansible.builtin.apt:
+#     name: signal-desktop
+#     state: present
+#   become: yes
+
+- name: Create temporary dir
+  ansible.builtin.tempfile:
+    state: directory
+    suffix: signal_keys
+  register: tmp_dir
+
+- name: Get keys file
+  ansible.builtin.get_url:
+    url: https://updates.signal.org/desktop/apt/keys.asc
+    dest: "{{ tmp_dir.path }}/keys.asc"
+    mode: "0644"
+
+- name: Install Signal official public software signing key
+  ansible.builtin.shell: |
+    set -o pipefail
+    cat {{ tmp_dir.path }}/keys.asc | gpg --dearmor > {{ tmp_dir.path }}/signal-desktop-keyring.gpg
+    cat {{ tmp_dir.path }}/signal-desktop-keyring.gpg | sudo tee -a /usr/share/keyrings/signal-desktop-keyring.gpg > /dev/null
+  args:
+    creates: /usr/share/keyrings/signal-desktop-keyring.gpg
+    executable: /bin/bash
+  become: true
+
+- name: Check if keyring exists
+  ansible.builtin.stat:
+    path: /usr/share/keyrings/signal-desktop-keyring.gpg
+  register: keyring_file
+
+- name: Keyring setup
+  ansible.builtin.include_tasks: keyring-setup.yml
+  when: not keyring_file.stat.exists
+
+- name: Add Signal repository to list of repositories
+  ansible.builtin.shell: |
+    set -o pipefail
+    echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/signal-desktop-keyring.gpg] https://updates.signal.org/desktop/apt xenial main' |\
+      sudo tee -a /etc/apt/sources.list.d/signal-xenial.list
+  args:
+    creates: /etc/apt/sources.list.d/signal-xenial.list
+    executable: /bin/bash
+
+- name: Update apt cache
+  ansible.builtin.apt:
+    update_cache: true
+  become: true
+
+- name: Install Signal
+  ansible.builtin.apt:
+    name: signal-desktop
+    state: present
+  become: true
