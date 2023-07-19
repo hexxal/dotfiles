@@ -1,7 +1,23 @@
+# Ansible dotfiles configuration (Fedora)
+
+- Install git
+  - `sudo dnf install git`
+- Install ansible
+  - `sudo dnf install ansible`
+- Install ansible playbook(s)
+  - `ansible-playbook -i hosts -K playbook-cli.yml`
+  - `ansible-playbook -i hosts -K playbook-gui.yml`
+
+# CLI
+
+- zsh
+- fzf
+- neovim
+
+# GUI
+
 - i3
 - polybar
-
-https://github.com/hexxal/dotfiles/blob/master/roles/gui/tasks/main.yml
-
-Notes:
-- setxkbmap fi, jäikö tää pysyvästi päälle? Piti vaihtaa näppis suomeksi
+- arandr
+- feh
+- flameshot

@@ -8,6 +8,7 @@
       - polybar
       - feh
       - flameshot
+      - arandr
 
 - name: Import Microsoft key
   become: yes
