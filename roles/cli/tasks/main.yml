@@ -8,6 +8,7 @@
       - neovim
       - fzf
       - bat
+      - tmux
 
 - name: Change to finnish keyboard
   become: yes
@@ -24,3 +25,15 @@
   template:
     src: templates/.zshrc
     dest: /home/{{ ansible_user_id }}/.zshrc
+
+- name: Set up tmux config
+  become: yes
+  become_user: root
+  copy:
+    src: templates/.tmux.conf
+    dest: /etc/.tmux.conf
+
+- name: Clone TPM repository
+  git:
+    repo: https://github.com/tmux-plugins/tpm.git
+    dest: ~/.tmux/plugins/tpm

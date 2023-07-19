@@ -14,6 +14,7 @@
 - fzf
 - neovim
 - bat
+- tmux
 
 # GUI
 
