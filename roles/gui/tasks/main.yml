@@ -1,24 +1,39 @@
 ---
-- name: Install APT packages
+- name: Install dnf packages
   become: yes
   become_method: sudo
-  apt:
+  dnf:
     pkg:
       - i3
-      - xinit
-      - x11-xserver-utils
-      - snapd
-      - firefox
-      - fonts-inconsolata
-      - arandr
-      - nemo
+      - polybar
+      - feh
+      - flameshot
 
-- name: Install code via snap
+- name: Import Microsoft key
+  become: yes
+  ansible.builtin.rpm_key:
+    state: present
+    key: https://packages.microsoft.com/keys/microsoft.asc
+
+- name: Add Microsoft repository
   become: yes
   become_method: sudo
-  snap:
+  copy:
+    content: |
+      [vscode]
+      name=Visual Studio Code
+      baseurl=https://packages.microsoft.com/yumrepos/vscode
+      enabled=1
+      gpgcheck=1
+      gpgkey=https://packages.microsoft.com/keys/microsoft.asc
+      repo_gpgcheck=1
+    dest: /etc/yum.repos.d/vscode.repo
+
+- name: Install Visual Studio Code
+  become: yes
+  dnf:
     name: code
-    classic: yes
+    state: present
 
 - name: Install VScode extensions
   command: code --install-extension {{ item }}
@@ -35,120 +50,39 @@
     - shardulm94.trailing-spaces
     - wengerk.highlight-bad-chars
     - golang.Go
-
-- name: Set up .Xresources from template
-  template:
-    src: templates/.Xresources
-    dest: /home/{{ ansible_user_id }}/.Xresources
+    - github.copilot
 
 - name: Set up i3 config from template
   template:
     src: templates/i3config
     dest: /home/{{ ansible_user_id }}/.config/i3/config
 
-- name: Set up i3status config from template
+- name: Set up polybar launch script from template
+  template:
+    src: templates/polybar-launch.sh
+    dest: /home/{{ ansible_user_id }}/.config/polybar/launch.sh
+    mode: '0755'
+
+- name: Set up polybar config from template
   become: yes
   template:
-    src: templates/i3status.conf
-    dest: /etc/i3status.conf
+    src: templates/polybar-config.ini
+    dest: /etc/polybar/config.ini
 
-- name: Update fonts cache
-  action: command fc-cache -f -v
+- name: Change to finnish keyboard
+  template:
+    src: templates/locale.conf
+    dest: /etc/locale.conf
 
-- name: Creates tmp Signal directory
-  file:
-    path: /home/{{ ansible_user_id }}/signal
-    state: directory
+- name: Set up wallpapers
+  become: yes
+  copy:
+    src: templates/wallpapers
+    dest: /home/{{ ansible_user_id }}/
+    mode: '0755'
 
-# - name: Get keys file
-#   ansible.builtin.get_url:
-#     url: https://updates.signal.org/desktop/apt/keys.asc
-#     dest: "/home/{{ ansible_user_id }}/signal/keys.asc"
-#     mode: "0644"
-
-# - name: Install Signal official public software signing key
-#   ansible.builtin.shell: |
-#     set -o pipefail
-#     cat /home/{{ ansible_user_id }}/signal/keys.asc | gpg --dearmor > /home/{{ ansible_user_id }}/signal-desktop-keyring.gpg
-#     cat /home/{{ ansible_user_id }}/signal/signal-desktop-keyring.gpg | sudo tee -a /usr/share/keyrings/signal-desktop-keyring.gpg > /dev/null
-#   args:
-#     creates: /usr/share/keyrings/signal-desktop-keyring.gpg
-#     executable: /bin/zsh
-#   become: true
-
-# # Signal install
-# - name: Check if keyring exists
-#   ansible.builtin.stat:
-#     path: /home/{{ ansible_user_id }}/signal/signal-desktop-keyring.gpg
-#   register: keyring_file
-
-# - name: Add Signal repository to list of repositories
-#   ansible.builtin.shell: |
-#     set -o pipefail
-#     echo 'deb [arch=amd64 signed-by=/home/{{ ansible_user_id }}/signal/signal-desktop-keyring.gpg] https://updates.signal.org/desktop/apt xenial main' |\
-#       sudo tee -a /etc/apt/sources.list.d/signal-xenial.list
-#   args:
-#     creates: /etc/apt/sources.list.d/signal-xenial.list
-#     executable: /bin/zsh
-
-# - name: Update apt cache
-#   ansible.builtin.apt:
-#     update_cache: true
-#   become: true
-
-# - name: Install Signal
-#   ansible.builtin.apt:
-#     name: signal-desktop
-#     state: present
-#   become: yes
-
-- name: Create temporary dir
-  ansible.builtin.tempfile:
-    state: directory
-    suffix: signal_keys
-  register: tmp_dir
-
-- name: Get keys file
-  ansible.builtin.get_url:
-    url: https://updates.signal.org/desktop/apt/keys.asc
-    dest: "{{ tmp_dir.path }}/keys.asc"
-    mode: "0644"
-
-- name: Install Signal official public software signing key
-  ansible.builtin.shell: |
-    set -o pipefail
-    cat {{ tmp_dir.path }}/keys.asc | gpg --dearmor > {{ tmp_dir.path }}/signal-desktop-keyring.gpg
-    cat {{ tmp_dir.path }}/signal-desktop-keyring.gpg | sudo tee -a /usr/share/keyrings/signal-desktop-keyring.gpg > /dev/null
-  args:
-    creates: /usr/share/keyrings/signal-desktop-keyring.gpg
-    executable: /bin/bash
-  become: true
-
-- name: Check if keyring exists
-  ansible.builtin.stat:
-    path: /usr/share/keyrings/signal-desktop-keyring.gpg
-  register: keyring_file
-
-- name: Keyring setup
-  ansible.builtin.include_tasks: keyring-setup.yml
-  when: not keyring_file.stat.exists
-
-- name: Add Signal repository to list of repositories
-  ansible.builtin.shell: |
-    set -o pipefail
-    echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/signal-desktop-keyring.gpg] https://updates.signal.org/desktop/apt xenial main' |\
-      sudo tee -a /etc/apt/sources.list.d/signal-xenial.list
-  args:
-    creates: /etc/apt/sources.list.d/signal-xenial.list
-    executable: /bin/bash
-
-- name: Update apt cache
-  ansible.builtin.apt:
-    update_cache: true
-  become: true
-
-- name: Install Signal
-  ansible.builtin.apt:
-    name: signal-desktop
-    state: present
-  become: true
+- name: Set up display script
+  template:
+    src: templates/set_displays.sh
+    dest: /home/{{ ansible_user_id }}/set_displays.sh
+    mode: '0755'

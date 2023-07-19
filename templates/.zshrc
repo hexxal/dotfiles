@@ -38,7 +38,7 @@ zstyle ':completion:*:kill:*' command 'ps -u $USER -o pid,%cpu,tty,cputime,cmd'
 # CUSTOM
 
 # Enable key bindings, such as Ctrl + R
-source /usr/share/doc/fzf/examples/key-bindings.zsh
+source /usr/share/fzf/shell/key-bindings.zsh
 
 bindkey "^[[1;5C" forward-word
 bindkey "^[[1;5D" backward-word
@@ -61,7 +61,7 @@ function in_git_repos() {
 
 function git_status_is_clean() {
     if in_git_repos; then
-        local lines=$(git status --porcelain | egrep -v '^\?\? ' | wc -l)
+        local lines=$(git status --porcelain | grep -E -v '^\?\? ' | wc -l)
         test $lines = 0
     fi
 }
@@ -76,7 +76,7 @@ function git_current_branch() {
 
 function git_unknown_files() {
     if in_git_repos; then
-        local lines=$(git status --porcelain | egrep '^\?\? ' | wc -l)
+        local lines=$(git status --porcelain | grep -E '^\?\? ' | wc -l)
         test $lines = 0
     fi
 }
@@ -105,9 +105,4 @@ GITDATA="${vcs_info_msg_0_}"
 setopt prompt_subst
 PROMPT='[%T]${USERDATA}${vcs_info_msg_0_}$(git_prompt_postfix)${NEWLINE}${DIRECTORY}${NEWLINE}$ '
 
-export PYENV_ROOT="$HOME/.pyenv"
-command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init -)"
-
-# Poetry
-export PATH="/home/hxl/.local/bin:$PATH"
+alias vim=nvim

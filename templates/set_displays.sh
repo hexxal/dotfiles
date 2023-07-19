@@ -1,0 +1,1 @@
+feh --bg-scale --zoom fill ~/wallpapers/wallpaper.jpg

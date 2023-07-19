@@ -1,11 +1,6 @@
----
 - name: Install CLI tools
   hosts: localhost
   become: no
-  vars:
-    user_name: Oskari Tiala
-    user_email: oskari.tiala@gmail.com
-    git_username: hxl
-  
+
   roles:
     - cli
