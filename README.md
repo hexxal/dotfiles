@@ -13,6 +13,7 @@
 - zsh
 - fzf
 - neovim
+- bat
 
 # GUI
 

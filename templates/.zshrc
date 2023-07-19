@@ -106,3 +106,4 @@ setopt prompt_subst
 PROMPT='[%T]${USERDATA}${vcs_info_msg_0_}$(git_prompt_postfix)${NEWLINE}${DIRECTORY}${NEWLINE}$ '
 
 alias vim=nvim
+alias cat=bat
