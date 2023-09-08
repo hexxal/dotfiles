@@ -1,0 +1,6 @@
+- name: Install CLI tools
+  hosts: localhost
+  become: no
+
+  roles:
+    - docker

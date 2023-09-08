@@ -1,0 +1,30 @@
+---
+- name: Install dnf packages
+  become: true
+  become_method: sudo
+  ansible.builtin.dnf:
+    pkg:
+      - dnf-plugins-core
+
+- name: Add Docker repository using dnf
+  become: true
+  command: dnf config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo
+
+- name: Install dnf packages
+  become: true
+  become_method: sudo
+  dnf:
+    pkg:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-buildx-plugin
+      - docker-compose-plugin
+
+- name: 'Add user "{{ ansible_user_id }}" to "docker" group'
+  become: yes
+  become_method: sudo
+  user:
+    name: "{{ ansible_user_id }}"
+    groups: "docker"
+    append: yes
