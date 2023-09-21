@@ -107,3 +107,7 @@ PROMPT='[%T]${USERDATA}${vcs_info_msg_0_}$(git_prompt_postfix)${NEWLINE}${DIRECT
 
 alias vim=nvim
 alias cat=bat
+
+function take() {
+  mkdir -p $@ && cd ${@:$#}
+}
